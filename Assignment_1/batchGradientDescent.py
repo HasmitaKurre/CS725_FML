@@ -49,17 +49,22 @@ class LinearRegressionBatchGD:
         X_batch, y_batch = batch  #X_batch and y_batch are data points and target values for a given batch
 
         # Complete the inner "for" loop to calculate the gradient of loss w.r.t weights, i.e. dw and update the weights
-        # You should use "compute_gradient()"  function to calculate gradient.
+        # You must update the `prev_weights` variable accordingly to invoke early stopping.
+        # NOTE: You should use "compute_gradient()"  function to calculate gradient.
+        gradient = self.compute_gradient(X_batch, y_batch, self.weights)
+        prev_weights = np.copy(self.weights)
+        self.weights -= self.learning_rate * gradient
 
 
       # After the inner "for" loop ends, calculate loss on the entire data using "compute_rmse_loss()" function and add the loss of each epoch to the "error list"
+      loss = self.compute_rmse_loss(X, y, self.weights)
+      self.error_list.append(loss)
 
       if np.linalg.norm(self.weights - prev_weights) < 1e-5:
-        print(f" Stopping at epoch {epoch}.")
         break
-    
+
     if plot:
-        plot_loss(self.error_list, self.max_epochs)
+        plot_loss(self.error_list, epoch + 1)
 
   def predict(self, X):
     '''
@@ -72,7 +77,7 @@ class LinearRegressionBatchGD:
       2D numpy array of predicted target values. Dimensions (n x 1)
     '''
     # Write your code here
-    raise NotImplementedError()
+    return X @ self.weights
 
   def compute_rmse_loss(self, X, y, weights):
     '''
@@ -87,7 +92,11 @@ class LinearRegressionBatchGD:
       loss : 2D numpy array of RMSE loss. float
     '''
     # Write your code here
-    raise NotImplementedError()
+    predictions = X @ weights
+    error = predictions - y
+    n = X.shape[0]
+    rmse_loss = np.linalg.norm(error) / np.sqrt(n)
+    return rmse_loss
 
   def compute_gradient(self, X, y, weights):
     '''
@@ -103,7 +112,10 @@ class LinearRegressionBatchGD:
     '''
     # Write your code here.
     # Note: Make sure you divide the gradient (dw) by the total number of training instances before returning to prevent "exploding gradients".
-    raise NotImplementedError()
+    n = X.shape[0]
+    predictions = X @ weights
+    gradient = (1 / n) * (X.T @ (predictions - y))
+    return gradient
 
 def plot_loss(error_list, total_epochs):
   '''
@@ -116,11 +128,18 @@ def plot_loss(error_list, total_epochs):
     None
   '''
   # Complete this function to plot the graph of losses stored in model's "error_list"
-  raise NotImplementedError()
+  plt.figure(figsize=(8, 6))
+  plt.plot(range(total_epochs), error_list, label='Loss')
+  plt.xlabel('Epochs')
+  plt.ylabel('RMSE Loss')
+  plt.title('Epoch vs Loss')
+  plt.legend()
+  plt.grid(True)
+  plt.savefig('histograms/plot_loss.png')
 
 def plot_learned_equation(X, y, y_hat):
     '''
-    This function generates the plot to visualize how well the learned linear equation fits the dataset  
+    This function generates the plot to visualize how well the learned linear equation fits the dataset
 
     Args:
       X : 2D numpy array of data points. Dimensions (n x 2)
@@ -132,26 +151,34 @@ def plot_learned_equation(X, y, y_hat):
     '''
     # Plot a 2d plot, with only  X[:,1] on x-axis (Think on why you can ignore X[:, 0])
     # Use y_hat to plot the line. DO NOT use y.
-    raise NotImplementedError()
+    plt.figure(figsize=(8, 6))
+    plt.scatter(X[:, 1], y, color='blue', label='Actual data')
+    plt.plot(X[:, 1], y_hat, color='red', label='Learned Line')
+    plt.xlabel('x')
+    plt.ylabel('y')
+    plt.title('Plot for equation of the form: y = w0 + w1*x')
+    plt.legend()
+    plt.grid(True)
+    plt.savefig('histograms/gradient_descent.png')
 
 ############################################
 #####        Helper functions          #####
 ############################################
 def generate_toy_dataset():
     '''
-    This function generates a simple toy dataset containing 300 points with 1d feature 
+    This function generates a simple toy dataset containing 300 points with 1d feature
     '''
     X = np.random.rand(300, 2)
     X[:, 0] = 1 # bias term
     weights = np.random.rand(2,1)
     noise = np.random.rand(300,1) / 32
     y = np.matmul(X, weights) + noise
-    
+
     X_train = X[:250]
     X_test = X[250:]
     y_train = y[:250]
     y_test = y[250:]
-    
+
     return X_train, y_train, X_test, y_test
 
 def create_batches(X, y, batch_size):
@@ -190,14 +217,14 @@ GREEN = '\033[32m'
 RED = '\033[31m'
 
 if __name__ == '__main__':
-    
+
     print(RED + "##### Gradient descent solution for linear regression #####")
-    
+
     # Hyperparameters
     learning_rate = 0.01
     batch_size = 5 # None
     max_epochs = 100
-    
+
     print(RESET +  "Loading dataset: ",end="")
     try:
         X_train, y_train, X_test, y_test = generate_toy_dataset()
@@ -206,7 +233,7 @@ if __name__ == '__main__':
         print(RED + "failed")
         print(e)
         exit()
-    
+
     print(RESET + "Calculating closed form solution: ", end="")
     try:
         linear_reg = LinearRegressionBatchGD(learning_rate=learning_rate, max_epochs=max_epochs, batch_size=5)
@@ -216,7 +243,7 @@ if __name__ == '__main__':
         print(RED + "failed")
         print(e)
         exit()
-    
+
     print(RESET + "Predicting for test split: ", end="")
     try:
         y_hat = linear_reg.predict(X_test)
@@ -225,7 +252,7 @@ if __name__ == '__main__':
         print(RED + "failed")
         print(e)
         exit()
-    
+
     print(RESET + "Plotting the solution: ", end="")
     try:
         plot_learned_equation(X_test, y_test, y_hat)
