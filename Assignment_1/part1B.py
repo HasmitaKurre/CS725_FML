@@ -12,11 +12,12 @@ def initialise_input(N, d):
 
   return U, M1, M2
 
-def solve():
+def solve(N, d):
+  U, M1, M2 = initialise_input(N, d)
 
   '''
   Enter your code here for steps 1 to 6
   '''
   return max_indices
   
-solve()
+solve(N,d)
