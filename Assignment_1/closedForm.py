@@ -25,8 +25,14 @@ class LinearRegressionClosedForm:
     Returns :
       None
     '''
+    X_transpose = X.T
+    X_transpose_X = X_transpose @ X
+    X_transpose_X_inv = np.linalg.inv(X_transpose_X)
+    X_transpose_y = X_transpose @ y
+
+    self.weights = X_transpose_X_inv @ X_transpose_y
     # Calculate the weights
-    raise NotImplementedError()
+    #raise NotImplementedError()
 
   def predict(self, X):
     '''
@@ -38,8 +44,11 @@ class LinearRegressionClosedForm:
     Returns:
       2D numpy array of predicted target values. Dimensions (n x 1)
     '''
+    if self.weights is None:
+       raise ValueError("Model has not been trained yet. Call fit() before predict().")
+    return X @ self.weights
     # Write your code here
-    raise NotImplementedError()
+    #raise NotImplementedError()
 
 def plot_learned_equation(X, y, y_hat):
     '''
@@ -55,7 +64,22 @@ def plot_learned_equation(X, y, y_hat):
     '''
     # Plot a 2d plot, with only  X[:,1] on x-axis (Think about why you can ignore X[:, 0])
     # Use y_hat to plot the line. DO NOT use y. 
-    raise NotImplementedError()
+    plt.figure(figsize=(8, 6))
+
+    # Plot the data points
+    plt.scatter(X[:, 1], y, color='blue')
+
+    # Plot the learned line
+    plt.plot(X[:, 1], y_hat, color='red')
+
+    plt.xlabel('x')
+    plt.ylabel('y')
+    plt.title('Plot for equationof the form: y = w0 + w1*x')
+    #plt.legend()
+    plt.savefig('closed_form.png')
+    plt.show()
+    
+    #raise NotImplementedError()
 
 ############################################
 #####        Helper functions          #####
