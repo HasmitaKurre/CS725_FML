@@ -18,7 +18,20 @@ def transform_input(x):
       
     '''
     # Write your code here
-    raise NotImplementedError()
+    K=3 # Using up to cubic features
+    n = x.shape[0]
+    X_transformed = np.ones((n, K + 2))  # Include bias term, x^2 term, and cos terms
+
+    # x^2 term
+    X_transformed[:, 1] = x[:, 0] ** 2
+
+    # cos(theta) terms with fixed theta values
+    thetas = np.linspace(0.1, 1.0, K)  # Define theta values
+    for i, theta in enumerate(thetas):
+        X_transformed[:, i + 2] = np.cos(theta * x[:, 0])
+
+    return X_transformed
+    #raise NotImplementedError()
     
 def read_dataset(filepath):
     '''
@@ -39,8 +52,23 @@ def read_dataset(filepath):
       
     '''
     # Write your code here
-    raise NotImplementedError()
+    data = pd.read_csv(filepath)
+    n = len(data)
+    n_train = int(0.9 * n)
+    
+    # Split into train and test
+    X_train = data.iloc[:n_train, 0].values.reshape(-1, 1)
+    y_train = data.iloc[:n_train, 1].values.reshape(-1, 1)
+    X_test = data.iloc[n_train:, 0].values.reshape(-1, 1)
+    y_test = data.iloc[n_train:, 1].values.reshape(-1, 1)
 
+    #print("X_train shape-", X_train.shape)
+    #print("y_train shape-", y_train.shape)
+    #print("X_test shape-", X_test.shape)
+    #print("y_test shape-", y_test.shape)
+    
+    #raise NotImplementedError()
+    return X_train, y_train, X_test, y_test
 
 ############################################
 #####        Helper functions          #####
