@@ -135,7 +135,7 @@ def plot_loss(error_list, total_epochs):
   plt.title('Epoch vs Loss')
   plt.legend()
   plt.grid(True)
-  plt.savefig('histograms/plot_loss.png')
+  plt.savefig('plot_loss.png')
 
 def plot_learned_equation(X, y, y_hat):
     '''
@@ -159,7 +159,7 @@ def plot_learned_equation(X, y, y_hat):
     plt.title('Plot for equation of the form: y = w0 + w1*x')
     plt.legend()
     plt.grid(True)
-    plt.savefig('histograms/gradient_descent.png')
+    plt.savefig('gradient_descent.png')
 
 ############################################
 #####        Helper functions          #####
