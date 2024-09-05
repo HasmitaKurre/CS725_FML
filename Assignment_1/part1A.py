@@ -80,6 +80,7 @@ def plot_hist(trials):
     # Save the histogram
     num_trials = len(trials)
     plt.savefig(f'histograms/hist_{num_trials}.png')
+    plt.show()
     plt.close()
    
 
