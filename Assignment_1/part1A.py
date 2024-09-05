@@ -6,6 +6,16 @@ random.seed(45)
 num_coins = 100
 
 def toss(num_trials):
+    '''
+    num_trials: number of trials to be performed.
+    
+    return a numpy array of size num_trials with each entry representing the number of heads found in each trial
+
+    Use for loops to generate the numpy array and 'random.choice()' to simulate a coin toss
+    
+    NOTE: Do not use predefined functions to directly get the numpy array. 
+    '''
+    
     global num_coins
     results = []
     for i_ in range(num_trials):
@@ -17,6 +27,14 @@ def toss(num_trials):
     return np.array(results)
     
 def plot_hist(trial, num_trials, y_scale=100.0):
+    '''
+    trial: vector of values for a particular trial.
+
+    plot the histogram for each trial.
+    Use 'axs' from plt.subplots() function to create histograms. You can search about how to use it to plot histograms.
+
+    Save the images in a folder named "histograms" in the current working directory.  
+    '''
     for i, num_trials in enumerate(num_trials_list):
         results = toss(num_trials)
         plt.subplot(len(num_trials_list), 1, i + 1)
