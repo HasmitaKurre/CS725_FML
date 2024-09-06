@@ -37,13 +37,6 @@ def plot_hist(trials):
     Save the images in a folder named "histograms" in the current working directory.  
     ''' 
     fig, axs = plt.subplots(figsize=(10, 7), tight_layout=True)
-
-   
-    def scale_y_labels(value, tick_position):
-       '''
-       Custom formatter to scale y-axis labels by 10,000
-       '''
-       return f'{int(value * 10000):,}'
     
     # Define bins covering the range from 0 to 100
     bins = list(range(num_coins + 2))  # Creates bins from 0 to 100
@@ -69,7 +62,7 @@ def plot_hist(trials):
     axs.set_xticklabels(specific_ticks)  # Label x-ticks with the same values
     # Save the histogram
     num_trials = len(trials)
-    plt.savefig(f'histograms/hist_{num_trials}.png')
+    plt.savefig(f'/hist_{num_trials}.png')
     plt.show()
     plt.close()
    
