@@ -35,12 +35,10 @@ def plot_hist(trials):
     Use 'axs' from plt.subplots() function to create histograms. 
 
     Save the images in a folder named "histograms" in the current working directory.  
-    '''
+    ''' 
     fig, axs = plt.subplots(figsize=(10, 7), tight_layout=True)
 
-    ##Write your code here
-    import os 
-    from matplotlib.ticker import FuncFormatter
+   
     def scale_y_labels(value, tick_position):
        '''
        Custom formatter to scale y-axis labels by 10,000
@@ -69,14 +67,6 @@ def plot_hist(trials):
     specific_ticks = [35, 40, 45, 50, 55, 60, 65]
     axs.set_xticks(specific_ticks)  # Set x-ticks to specific values
     axs.set_xticklabels(specific_ticks)  # Label x-ticks with the same values
-    
-    # Apply custom formatter for y-axis labels
-    axs.yaxis.set_major_formatter(FuncFormatter(scale_y_labels))
-    
-    # Ensure the 'histograms' directory exists
-    if not os.path.exists('histograms'):
-        os.makedirs('histograms')
-    
     # Save the histogram
     num_trials = len(trials)
     plt.savefig(f'histograms/hist_{num_trials}.png')
