@@ -43,8 +43,8 @@ def solve(N, d):
   return max_indices
 
 
-N = int(input("Enter an Integer for N :"))
-d = int(input("Enter an Integer for d :"))
+N = 4  # int(input("Enter an Integer for N :"))
+d = 4  # int(input("Enter an Integer for d :"))
 
 print(solve(N,d))
 
