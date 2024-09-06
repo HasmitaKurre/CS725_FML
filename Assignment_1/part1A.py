@@ -42,7 +42,7 @@ def plot_hist(trials):
     bins = list(range(num_coins + 2))  # Creates bins from 0 to 100
     
     # Plot histogram with the full range of bins
-    counts, bin_edges, patches = axs.hist(trials, bins=bins, density=True, alpha=1)
+    counts, bin_edges, patches = axs.hist(trials, bins=bins, density=False, alpha=1)
     
     # Customize the bar widths to create gaps
     for patch in patches:
@@ -50,8 +50,8 @@ def plot_hist(trials):
 
     # Set plot title and labels
     axs.set_title(f'Histogram of Number of Heads ({len(trials)} Trials)')
-    axs.set_xlabel('Number of Heads')
-    axs.set_ylabel('Frequency')
+    axs.set_xlabel('Coins')
+    axs.set_ylabel('Number of Heads')
     
     # Set x-axis limits to focus on the range from 30 to 70
     axs.set_xlim(30, 70)
