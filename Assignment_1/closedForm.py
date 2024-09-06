@@ -1,78 +1,147 @@
-from matplotlib import pyplot as plt
 import numpy as np
-import random
-random.seed(45)
+import matplotlib.pyplot as plt
+import pandas as pd
 
-num_coins = 100
-def toss(num_trials):
+np.random.seed(2024)
+
+class LinearRegressionClosedForm:
+  def __init__(self):
     '''
-    num_trials: number of trials to be performed.
-    
-    return a numpy array of size num_trials with each entry representing the number of heads found in each trial
+    Initializing the parameters of the model
 
-    Use for loops to generate the numpy array and 'random.choice()' to simulate a coin toss
-    
-    NOTE: Do not use predefined functions to directly get the numpy array. 
+    Returns:
+      None
     '''
-    global num_coins
-    results = []
-    
-    for _ in range(num_trials):
-        num_heads = 0
-        for _ in range(num_coins):
-            if random.choice([0, 1]) == 1:  # 1 for heads, 0 for tails
-                num_heads += 1
-        results.append(num_heads)
-    
-    return results
+    self.weights = None
 
-
-def plot_hist(trials):
+  def fit(self, X, y):
     '''
-    trials: vector of values for a particular trial.
+    This function is used to obtain the weights of the model using closed form solution.
 
-    plot the histogram for each trial.
-    Use 'axs' from plt.subplots() function to create histograms. 
+    Args:
+      X : 2D numpy array of training set data points. Dimensions (n x (d+1))
+      y : 2D numpy array of target values in the training dataset. Dimensions (n x 1)
 
-    Save the images in a folder named "histograms" in the current working directory.  
-    ''' 
-    fig, axs = plt.subplots(figsize=(10, 7), tight_layout=True)
-    
-    # Define bins covering the range from 0 to 100
-    bins = list(range(num_coins + 2))  # Creates bins from 0 to 100
-    
-    # Plot histogram with the full range of bins
-    counts, bin_edges, patches = axs.hist(trials, bins=bins, density=False, alpha=1, label=f'NUM_TRIALS= {len(trials)}')
-    
-    # Customize the bar widths to create gaps
-    for patch in patches:
-        patch.set_width(0.5 * (bin_edges[1] - bin_edges[0]))  # Adjust width to create gaps
+    Returns :
+      None
+    '''
+    X_transpose = X.T
+    X_transpose_X = X_transpose @ X
+    X_transpose_X_inv = np.linalg.inv(X_transpose_X)
+    X_transpose_y = X_transpose @ y
 
-    # Set plot title and labels
-    ##axs.set_title(f'Histogram of Number of Heads ({len(trials)} Trials)')
-    axs.set_xlabel('Coins')
-    axs.set_ylabel('Number of heads')
-    
-    # Set x-axis limits to focus on the range from 30 to 70
-    axs.set_xlim(30, 70)
-    
-    # Set x-axis ticks and labels to specific values
-    specific_ticks = [35, 40, 45, 50, 55, 60, 65]
-    axs.set_xticks(specific_ticks)  # Set x-ticks to specific values
-    axs.set_xticklabels(specific_ticks)  # Label x-ticks with the same values
+    self.weights = X_transpose_X_inv @ X_transpose_y
+    # Calculate the weights
+    #raise NotImplementedError()
 
-    # Add the legend to display the number of trials
-    axs.legend(loc='upper right')  # Use 'upper right' to place the legend in the top-right corner
+  def predict(self, X):
+    '''
+    This function is used to predict the target values for the given set of feature values
 
-    # Save the histogram
-    num_trials = len(trials)
-    plt.savefig(f'/hist_{num_trials}.png')
+    Args:
+      X: 2D numpy array of data points. Dimensions (n x (d+1))
+
+    Returns:
+      2D numpy array of predicted target values. Dimensions (n x 1)
+    '''
+    if self.weights is None:
+       raise ValueError("Model has not been trained yet. Call fit() before predict().")
+    return X @ self.weights
+    # Write your code here
+    #raise NotImplementedError()
+
+def plot_learned_equation(X, y, y_hat):
+    '''
+    This function generates the plot to visualize how well the learned linear equation fits the dataset  
+
+    Args:
+      X : 2D numpy array of data points. Dimensions (n x 2)
+      y : 2D numpy array of target values. Dimensions (n x 1)
+      y_hat : 2D numpy array of predicted values. Dimensions (n x 1)
+
+    Returns:
+      None
+    '''
+    # Plot a 2d plot, with only  X[:,1] on x-axis (Think about why you can ignore X[:, 0])
+    # Use y_hat to plot the line. DO NOT use y. 
+    plt.figure(figsize=(8, 6))
+
+    # Plot the data points
+    plt.scatter(X[:, 1], y, color='blue')
+
+    # Plot the learned line
+    plt.plot(X[:, 1], y_hat, color='red')
+
+    plt.xlabel('x')
+    plt.ylabel('y')
+    plt.title('Plot for equationof the form: y = w0 + w1*x')
+    #plt.legend()
+    plt.savefig('closed_form.png')
     plt.show()
-    plt.close()
-   
+    
+    #raise NotImplementedError()
 
-if __name__ == "__main__":
-    num_trials_list = [10, 100, 1000, 10000, 100000]
-    for num_trials in num_trials_list:
-        heads_array = toss(num_trials)
-        plot_hist(heads_array)
+############################################
+#####        Helper functions          #####
+############################################
+def generate_toy_dataset():
+    '''
+    This function generates a simple toy dataset containing 300 points with 1d feature 
+    '''
+    X = np.random.rand(300, 2)
+    X[:, 0] = 1 # bias term
+    weights = np.random.rand(2,1)
+    noise = np.random.rand(300,1) / 32
+    y = np.matmul(X, weights) + noise
+    
+    X_train = X[:250]
+    X_test = X[250:]
+    y_train = y[:250]
+    y_test = y[250:]
+    return X_train, y_train, X_test, y_test
+
+# Terminal text coloring
+RESET = '\033[0m'
+GREEN = '\033[32m'
+RED = '\033[31m'
+
+if __name__ == '__main__':
+    
+    print(RED + "##### Closed form solution for linear regression #####")
+    
+    print(RESET +  "Loading dataset: ",end="")
+    try:
+        X_train, y_train, X_test, y_test = generate_toy_dataset()
+        print(GREEN + "done")
+    except Exception as e:
+        print(RED + "failed")
+        print(e)
+        exit()
+    
+    print(RESET + "Calculating closed form solution: ", end="")
+    try:
+        linear_reg = LinearRegressionClosedForm()
+        linear_reg.fit(X_train,y_train)
+        print(GREEN + "done")
+    except Exception as e:
+        print(RED + "failed")
+        print(e)
+        exit()
+    
+    print(RESET + "Predicting for test split: ", end="")
+    try:
+        y_hat = linear_reg.predict(X_test)
+        print(GREEN + "done")
+    except Exception as e:
+        print(RED + "failed")
+        print(e)
+        exit()
+    
+    print(RESET + "Plotting the solution: ", end="")
+    try:
+        plot_learned_equation(X_test, y_test, y_hat)
+        print(GREEN + "done")
+    except Exception as e:
+        print(RED + "failed")
+        print(e)
+        exit()
