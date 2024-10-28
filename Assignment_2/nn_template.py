@@ -1,3 +1,4 @@
+
 import numpy as np
 import matplotlib.pyplot as plt
 np.random.seed(42)
@@ -327,9 +328,9 @@ if __name__ == "__main__":
     # }
     optimizers = [
         ("bgd", {'learning_rate': 0.05, 'gd_flag': 1, 'momentum': 0.99, 'decay_constant': 0.2}),
-        ("bgd", {'learning_rate': 0.1, 'gd_flag': 2, 'momentum': 0.99, 'decay_constant': 0.2}),
-        ("bgd", {'learning_rate': 0.1, 'gd_flag': 3, 'momentum': 0.99, 'decay_constant': 0.2}),
-        ("adam", {'learning_rate': 0.01, 'beta1': 0.9, 'beta2': 0.999, 'eps': 1e-8}),
+        ("bgd", {'learning_rate': 0.05, 'gd_flag': 2, 'momentum': 0.99, 'decay_constant': 0.2}),
+        ("bgd", {'learning_rate': 0.05, 'gd_flag': 3, 'momentum': 0.99, 'decay_constant': 0.2}),
+        ("adam", {'learning_rate': 0.001, 'beta1': 0.999, 'beta2': 0.999, 'eps': 1e-8}),
     ]
     
     for optimizer, optimizer_params in optimizers: 
