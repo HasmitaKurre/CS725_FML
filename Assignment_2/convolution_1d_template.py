@@ -22,7 +22,36 @@ def Convolution_1D(
     np.array, output of the convolution
     """
     
-    pass
+    Lf = len(array1)
+    Lg = len(array2)
+
+    # Determine padding size based on the chosen mode
+    if padding == 'full':
+        # For 'full' padding, we add Lg - 1 zeros on both sides of the input array
+        pad_size = Lg - 1
+        array1_padded = np.pad(array1, (pad_size, pad_size), mode='constant')
+    elif padding == 'valid':
+        # For 'valid' padding, no padding is applied
+        array1_padded = array1
+    else:
+        raise ValueError("Padding must be either 'full' or 'valid'.")
+
+    # Length of the padded input array
+    padded_length = len(array1_padded)
+    
+    # Compute the output size based on stride
+    output_length = (padded_length - Lg) // stride + 1
+
+    # Initialize the result array
+    result = np.zeros(output_length)
+
+    # Perform the convolution
+    for i in range(output_length):
+        start = i * stride
+        end = start + Lg
+        result[i] = np.sum(array1_padded[start:end] * array2)
+    
+    return result
 
 def probability_sum_of_faces(p_A: np.array, p_B:np.array) -> np.array:
     """
@@ -46,4 +75,7 @@ def probability_sum_of_faces(p_A: np.array, p_B:np.array) -> np.array:
 
     The output should start with the probability of 2, and hence the expected output is [0.25, 0.5, 0.25].
     """
-    pass
+    result = np.convolve(p_A, p_B)
+
+    # Return the result as a numpy array, where the sum starts from 2 (index 0 corresponds to sum = 2)
+    return result
