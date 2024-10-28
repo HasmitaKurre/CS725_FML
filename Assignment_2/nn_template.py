@@ -22,7 +22,7 @@ def sigmoid_derivative(x):
 
 ## TODO 1c: Return the derivative of the tanh value of the input x
 def tanh(x):
-    return 2*sigmoid(2*x) - 1
+    return np.tanh(x)# 2*sigmoid(2*x) - 1
 
 ## TODO 1d: Return the derivative of the tanh value of the input x
 def tanh_derivative(x):
@@ -38,7 +38,7 @@ str_to_func = {
 
 # Given a list of activation functions, the following function returns
 # the corresponding list of activation functions and their derivatives
-def get_activation_functions(activations):  
+def get_activation_functions(activations):
     activation_funcs, activation_derivatives = [], []
     for activation in activations:
         activation_func, activation_derivative = str_to_func[activation]
@@ -54,11 +54,11 @@ class NN:
         input_dim : int
             size of the input layer.
         hidden_dims : LIST<int>
-            List of positive integers where each integer corresponds to the number of neurons 
+            List of positive integers where each integer corresponds to the number of neurons
             in the hidden layers. The list excludes the number of neurons in the output layer.
             For this problem, we fix the output layer to have just 1 neuron.
         activations : LIST<string>, optional
-            List of strings where each string corresponds to the activation function to be used 
+            List of strings where each string corresponds to the activation function to be used
             for all hidden layers. The list excludes the activation function for the output layer.
             For this problem, we fix the output layer to have the sigmoid activation function.
         ----------
@@ -67,7 +67,7 @@ class NN:
         '''
         assert(len(hidden_dims) > 0)
         assert(activations == None or len(hidden_dims) == len(activations))
-         
+
         # If activations is None, we use sigmoid activation for all layers
         if activations == None:
             self.activations = [sigmoid]*(len(hidden_dims)+1)
@@ -86,26 +86,26 @@ class NN:
         '''
         Parameters
         ----------
-        X : input data, numpy array of shape (N, D) where N is the number of examples and D 
+        X : input data, numpy array of shape (N, D) where N is the number of examples and D
             is the dimension of each example
         ----------
-        Returns : output probabilities, numpy array of shape (N, 1) 
+        Returns : output probabilities, numpy array of shape (N, 1)
         ----------
         '''
         # Forward pass
-        
+
         ## TODO 3a: Compute activations for all the nodes with the corresponding
         ## activation function of each layer applied to the hidden nodes
         # Initialize the list of activations with the input layer
         self.a = [X]
-    # Iterate over hidden layers
+        # Iterate over hidden layers
         for i in range(len(self.weights) - 1):  # Exclude the output layer for this loop
             z = np.dot(self.a[-1], self.weights[i]) + self.biases[i]  # Weighted sum
             a = self.activations[i](z)  # Activation function
             self.a.append(a)  # Store the activation
 
         ## TODO 3b: Calculate the output probabilities of shape (N, 1) where N is number of examples
-    # Output layer
+        # Output layer
         z_output = np.dot(self.a[-1], self.weights[-1]) + self.biases[-1]  # Weighted sum for output layer
         output_probs = sigmoid(z_output)  # Apply sigmoid activation for output layer
         self.a.append(output_probs)  # Store the output activation
@@ -115,7 +115,7 @@ class NN:
         '''
         Parameters
         ----------
-        X : input data, numpy array of shape (N, D) where N is the number of examples and D 
+        X : input data, numpy array of shape (N, D) where N is the number of examples and D
             is the dimension of each example
         y : target labels, numpy array of shape (N, 1) where N is the number of examples
         ----------
@@ -124,10 +124,10 @@ class NN:
         '''
         # Backpropagation
         N = X.shape[0]
-        ## TODO 4a: Compute gradients for the output layer after computing derivative of 
+        ## TODO 4a: Compute gradients for the output layer after computing derivative of
         ## sigmoid-based binary cross-entropy loss
-        ## Hint: When computing the derivative of the cross-entropy loss, don't forget to 
-        ## divide the gradients by N (number of examples)  
+        ## Hint: When computing the derivative of the cross-entropy loss, don't forget to
+        ## divide the gradients by N (number of examples)
         output_probs = self.a[-1]
         delta_output = (output_probs - y.reshape(-1, 1)) / N
         self.grad_weights = []
@@ -136,15 +136,15 @@ class NN:
         self.grad_biases.append(np.sum(delta_output, axis=0))
         ## TODO 4b: Next, compute gradients for all weights and biases for all layers
         ## Hint: Start from the output layer and move backwards to the first hidden layer
-        delta = delta_output 
+        delta = delta_output
         for l in range(len(self.weights) - 2, -1, -1):
             delta = np.dot(delta, self.weights[l + 1].T) * self.activation_derivatives[l](self.a[l + 1])
             self.grad_weights.append(np.dot(self.a[l].T, delta))
             self.grad_biases.append(np.sum(delta, axis=0))
-            
+
         self.grad_weights.reverse()
         self.grad_biases.reverse()
-        
+
         return self.grad_weights, self.grad_biases
 
     def step_bgd(self, weights, biases, delta_weights, delta_biases, optimizer_params, epoch):
@@ -175,7 +175,7 @@ class NN:
         if gd_flag == 1:
             updated_W = [w - learning_rate * dw for w, dw in zip(weights, delta_weights)]
             updated_B = [b - learning_rate * db for b, db in zip(biases, delta_biases)]
-            
+
         ## TODO 5b: Variant 2(gd_flag = 2): Vanilla GD with Exponential Learning Rate Decay
         ## Use the hyperparameter learning_rate as the initial learning rate
         ## Use the parameter epoch for t
@@ -184,7 +184,7 @@ class NN:
             decayed_learning_rate = learning_rate * np.exp(-decay_constant * epoch)
             updated_W = [w - decayed_learning_rate * dw for w, dw in zip(weights, delta_weights)]
             updated_B = [b - decayed_learning_rate * db for b, db in zip(biases, delta_biases)]
-            
+
         ## TODO 5c: Variant 3(gd_flag = 3): GD with Momentum
         ## Use the hyperparameters learning_rate and momentum
         elif gd_flag == 3:
@@ -193,7 +193,7 @@ class NN:
             self.velocity = [momentum * v + (1 - momentum) * dw for v, dw in zip(self.velocity, delta_weights)]
             updated_W = [w - learning_rate * v for w, v in zip(weights, self.velocity)]
             updated_B = [b - learning_rate * db for b, db in zip(biases, delta_biases)]
-            
+
         return updated_W, updated_B
 
     def step_adam(self, weights, biases, delta_weights, delta_biases, optimizer_params):
@@ -210,38 +210,38 @@ class NN:
                 gamma: Exponential decay rate for the second moment estimates.
                 eps: A small constant for numerical stability.
         '''
-        
+
         learning_rate = optimizer_params['learning_rate']
         beta1 = optimizer_params['beta1']
         beta2 = optimizer_params['beta2']
-        eps = optimizer_params['eps']       
+        eps = optimizer_params['eps']
 
         ## TODO 6: Return updated weights and biases for the hidden layer based on the update rules for Adam Optimizer
         if not hasattr(self, 'm'):
             self.m = [np.zeros_like(w) for w in weights]
-        
+
         if not hasattr(self, 'v'):
-            self.v = [np.zeros_like(w) for w in weights]    
-        
+            self.v = [np.zeros_like(w) for w in weights]
+
         if not hasattr(self, 't'):
-            self.t = 0 
-        
-        self.t += 1  
+            self.t = 0
+
+        self.t += 1
         updated_W = []
-        updated_B = []  
-        
+        updated_B = []
+
         for i in range(len(weights)):
             self.m[i] = beta1 * self.m[i] + (1 - beta1) * delta_weights[i]
             self.v[i] = beta2 * self.v[i] + (1 - beta2) * (delta_weights[i] ** 2)
             m_hat = self.m[i] / (1 - beta1 ** self.t)
             v_hat = self.v[i] / (1 - beta2 ** self.t)
-            updated_weight = weights[i] - learning_rate * m_hat / (np.sqrt(v_hat) + eps)
+            updated_weight = weights[i] - learning_rate * m_hat / (np.sqrt(v_hat + eps))
             updated_W.append(updated_weight)
-            
+
         for i in range(len(biases)):
             updated_bias = biases[i] - learning_rate * delta_biases[i]
             updated_B.append(updated_bias)
-            
+
         return updated_W, updated_B
 
     def train(self, X_train, y_train, X_eval, y_eval, num_epochs, batch_size, optimizer, optimizer_params):
@@ -279,7 +279,7 @@ class NN:
 
         return train_losses, test_losses
 
-    
+
     # Plot the loss curve
     def plot_loss(self, train_losses, test_losses, optimizer, optimizer_params):
         plt.plot(train_losses, label='Train Loss')
@@ -291,14 +291,14 @@ class NN:
             plt.savefig(f'loss_bgd_{optimizer_params["gd_flag"]}.png')
         else:
             plt.savefig(f'loss_adam.png')
- 
+
 
 # Example usage:
 if __name__ == "__main__":
-    # Read from data.csv 
+    # Read from data.csv
     csv_file_path = "data_train.csv"
     eval_file_path = "data_eval.csv"
-    
+
     data = np.genfromtxt(csv_file_path, delimiter=',', skip_header=0)
     data_eval = np.genfromtxt(eval_file_path, delimiter=',', skip_header=0)
 
@@ -316,8 +316,8 @@ if __name__ == "__main__":
     num_epochs = 30
     batch_size = 100
     activations = ['sigmoid', 'sigmoid']
-    
-    
+
+
     # For Adam optimizer you can use the following
     # optimizer = "adam"
     # optimizer_params = {
@@ -332,11 +332,11 @@ if __name__ == "__main__":
         ("bgd", {'learning_rate': 0.05, 'gd_flag': 3, 'momentum': 0.99, 'decay_constant': 0.2}),
         ("adam", {'learning_rate': 0.001, 'beta1': 0.999, 'beta2': 0.999, 'eps': 1e-8}),
     ]
-    
-    for optimizer, optimizer_params in optimizers: 
+
+    for optimizer, optimizer_params in optimizers:
         model = NN(input_dim, hidden_dims)
         train_losses, test_losses = model.train(X_train, y_train, X_eval, y_eval,
-                                    num_epochs, batch_size, optimizer, optimizer_params) #trained on concentric circle data 
+                                    num_epochs, batch_size, optimizer, optimizer_params) #trained on concentric circle data
         model.plot_loss(train_losses, test_losses, optimizer, optimizer_params)
         plt.clf()
     test_preds = model.forward(X_eval)
