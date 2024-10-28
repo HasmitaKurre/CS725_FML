@@ -18,9 +18,10 @@ def sigmoid(x):
 def sigmoid_derivative(x):
     sig = sigmoid(x)
     return sig*(1-sig)
+
 ## TODO 1c: Return the derivative of the tanh value of the input x
 def tanh(x):
-    return np.tanh(x)
+    return 2*sigmoid(2*x) - 1
 
 ## TODO 1d: Return the derivative of the tanh value of the input x
 def tanh_derivative(x):
@@ -108,8 +109,6 @@ class NN:
         output_probs = sigmoid(z_output)  # Apply sigmoid activation for output layer
         self.a.append(output_probs)  # Store the output activation
         return output_probs
-
-    
 
     def backward(self, X, y):
         '''
@@ -338,9 +337,11 @@ if __name__ == "__main__":
         train_losses, test_losses = model.train(X_train, y_train, X_eval, y_eval,
                                     num_epochs, batch_size, optimizer, optimizer_params) #trained on concentric circle data 
         model.plot_loss(train_losses, test_losses, optimizer, optimizer_params)
+        plt.clf()
     test_preds = model.forward(X_eval)
 
     test_accuracy = np.mean((test_preds > 0.5).reshape(-1,) == y_eval)
     print(f"Final Test accuracy: {test_accuracy:.4f}")
 
     model.plot_loss(train_losses, test_losses, optimizer, optimizer_params)
+    plt.clf()
