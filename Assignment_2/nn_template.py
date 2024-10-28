@@ -316,29 +316,27 @@ if __name__ == "__main__":
     num_epochs = 30
     batch_size = 100
     activations = ['sigmoid', 'sigmoid']
-
+    optimizer = "bgd"
+    optimizer_params = {
+        'learning_rate': 0.05,
+        'gd_flag': 3,
+        'momentum': 0.99,
+        'decay_constant': 0.2
+    }
 
     # For Adam optimizer you can use the following
     # optimizer = "adam"
     # optimizer_params = {
-    #     'learning_rate': 0.01,
-    #     'beta1' : 0.9,
-    #     'beta2' : 0.999,
+    #     'learning_rate': 0.001,
+    #     'beta1' : 0.99,
+    #     'beta2' : 0.99,
     #     'eps' : 1e-8
     # }
-    optimizers = [
-        ("bgd", {'learning_rate': 0.05, 'gd_flag': 1, 'momentum': 0.99, 'decay_constant': 0.2}),
-        ("bgd", {'learning_rate': 0.05, 'gd_flag': 2, 'momentum': 0.99, 'decay_constant': 0.2}),
-        ("bgd", {'learning_rate': 0.05, 'gd_flag': 3, 'momentum': 0.99, 'decay_constant': 0.2}),
-        ("adam", {'learning_rate': 0.001, 'beta1': 0.999, 'beta2': 0.999, 'eps': 1e-8}),
-    ]
 
-    for optimizer, optimizer_params in optimizers:
-        model = NN(input_dim, hidden_dims)
-        train_losses, test_losses = model.train(X_train, y_train, X_eval, y_eval,
-                                    num_epochs, batch_size, optimizer, optimizer_params) #trained on concentric circle data
-        model.plot_loss(train_losses, test_losses, optimizer, optimizer_params)
-        plt.clf()
+    model = NN(input_dim, hidden_dims)
+    train_losses, test_losses = model.train(X_train, y_train, X_eval, y_eval,
+                                num_epochs, batch_size, optimizer, optimizer_params) #trained on concentric circle data
+
     test_preds = model.forward(X_eval)
 
     test_accuracy = np.mean((test_preds > 0.5).reshape(-1,) == y_eval)
