@@ -20,6 +20,7 @@ Course Project of Foundations of Machine Learning (CS-725)
 
 * Chaitanya Shinge
   * ResNet50 implementation on the dataset.
+  * Simple RGB Classifier implementation on the dataset
 
 * Chanakya Vihar Challa
   * MobileNetV2 implementation on the dataset.
