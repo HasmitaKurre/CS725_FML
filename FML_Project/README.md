@@ -87,13 +87,18 @@ So, we masked(recolored) those regions with maximum amount of color intensity.
 ### ResNet50
 
 We used ResNet50 model proposed in [Deep Residual Learning for Image Recognition](https://doi.org/10.1109/CVPR.2016.90) research paper. We chose this ResNet50 among other variants considering our dataset. \
-We used ResNet50 model provided by `keras` with slight adjustments. We overrided the final classifcation layers with two fully connected layers one with 1024 neurons and other with three neurons per class. Using  accuracy as metric, we used ADAM optimizer to minimize the sparse categorical cross entropy loss for every epoch. We ran model for 200 epochs. Please check the `results/` for model performance throughout training and testing.
+We used `ResNet50` model provided by `keras` with slight adjustments. We overrided the final classifcation layers with two fully connected layers one with 1024 neurons and other with three neurons per class. Using `accuracy` as metric, we used `ADAM optimizer` to minimize the `sparse categorical cross entropy loss` for every epoch. We ran model for `200 epochs`. Please check the `results/` for model performance throughout training and testing.
 
-* Common Hyperparameters across Models
-  * Image Size: 96 x 96 x 3
-  * Epochs: 200 (but also using Early Stopping)
-  * Training Batch Size: 32
-* Calculated Accuracy, F1-score, Recall and Precision using scikit-learn
+### Common Hyperparameters across Models
+
+* Image Size: 96 x 96 x 3
+* Epochs: 200 (but also using Early Stopping)
+* Training Batch Size: 32
+
+### Metrics Calculated
+
+* Accuracy, F1-score, Recall, Precision using scikit-learn
+* Confusion Matrix using seaborn
 
 ## Run
 
