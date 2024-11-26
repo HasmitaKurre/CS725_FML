@@ -43,17 +43,40 @@ algorithms by calculating their accuracy and f1-score.
 
 ## Dataset
 
-NASA-USDA, SMAP soil moisture profile satellite data from 2015 to 2020 clipped for India region
+### Dataset Generation
 
-* Patch Dimensions: 396 x 396
-* Training split: 70%
-* Validation split: 20%
+We used satellite data from NASA-USDA on SMAP soil moisture profile provided using Google Maps API.
+We saved snapshots from 2015 to 2020 and clipped the region of India.
+We created patches of `396 x 396` dimensions of the region and assigned groundtruth label according to the intensity levels provided by the profiler.
+Patches of a groundtruth label are stored in the directory named as that class label.
+
+### Dataset Sampling
+
+![Dataset class-wise #patches](./assets/dataset_class_distribution.png)
+
+Due to such uneven #patches we selected three classes Dry, Moderate_Moisture and Highest_Moisture with considerable images to train on. Also, we had to downsample Highest_Moisture and upsample Moderate_Moisture class patches.
+
+The following table shows the final dataset stats:
 
 |Moisture Class|#Patches|
 |:---:|:---:|
 |Dry|5001|
 |Moderate_Moisture|5001|
 |Highest_Moisture|5000|
+
+### Dataset Masking
+
+The pixel coloring around Indian borders were white which created possibility of classifier to classify these images in meaningless class where patches have dominating white regions.
+So, we masked(recolored) those regions with maximum amount of color intensity.
+
+> The following diagram can help better visualize overall process:
+
+![Dataset Generation](./assets/dataset_processing.png)
+
+### Dataset Split
+
+* Training split: 70%
+* Validation split: 20%
 
 ## Techniques Used
 
@@ -93,10 +116,18 @@ NASA-USDA, SMAP soil moisture profile satellite data from 2015 to 2020 clipped f
 
 ### Observations
 
+Following images are some inference tests using trained CNN model:
+
+![Trained CNN model Inference Results](./assets/inference_results.png)
+
 * All classes are classified perfectly.
 * Performance is consistent across each class.
 * Model performs very well in classifying images without notable errors.
 * Minimal misclassifications and good predictions.
+
+This is the confusion matrix of the CNN model trained.
+
+![Confusion Matrix of trained CNN Model](./assets/cnn_confusion_matrix.png)
 
 |Models|Test Accuracy|
 |:---:|:---:|
