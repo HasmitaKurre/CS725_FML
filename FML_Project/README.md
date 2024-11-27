@@ -1,8 +1,6 @@
 # Soil Moisture Detection and Prediction
 
-## Academic Programme
-
-Foundations of Machine Learning (CS-725)
+Course Project of Foundations of Machine Learning (CS-725)
 
 ## Team Details
 
@@ -22,6 +20,7 @@ Foundations of Machine Learning (CS-725)
 
 * Chaitanya Shinge
   * ResNet50 implementation on the dataset.
+  * Simple RGB Classifier implementation on the dataset
 
 * Chanakya Vihar Challa
   * MobileNetV2 implementation on the dataset.
@@ -75,10 +74,44 @@ So, we masked(recolored) those regions with maximum amount of color intensity.
 
 ### Dataset Split
 
-* Training split: 70%
+* Training split: 80%
 * Validation split: 20%
 
 ## Techniques Used
+
+### Simple RGB Classifier
+
+Since, we have to classify RGB images on the basis of predominant color in the image. We tried a simple RGB classifier without using ML-DL algorithms to have it as a benchmark to compare our models.
+
+#### Algorithm
+
+1. Take array form of image
+2. Read each pixel and classify it into one of three classes.
+3. Assign the class in which maximum pixels of the image are classified.
+
+#### Classification criteria on a Pixel
+
+Consider every `pixel` as tuple of RGB values: **(RED, BLUE, GREEN)** \
+**RED, BLUE, GREEN ∈ [0, 255]**
+
+* **Highest_moisture**
+  * `BLUE/DARK BLUE` i.e. BLUE > RED & BLUE > GREEN & BLUE < 200
+* **Dry**
+  * `RED` i.e. RED > BLUE & RED > GREEN
+  * `ORANGISH/REDISH` i.e. RED > BLUE & GREEN > BLUE & (RED < 200 | GREEN < 200)
+* **Moderate_moisture**
+  * `LIGHT BLUE` i.e. BLUE > RED & BLUE > GREEN & BLUE < 200
+  * `GREEN` i.e. GREEN > RED and GREEN > BLUE
+  * `YELLOW` i.e. RED > BLUE & RED > 200 & GREEN > BLUE & GREEN > 200
+  * `ANY OTHER CASE`
+
+This classification criteria is neither underfitting nor overfitting.
+
+#### Classification Report
+
+The classification criteria can be refined and finer details can be added as new criteria to reduce misclassifications
+
+![Confusion Matrix of Simple RGB Classifier](./assets/simple_rgb_classifier_confusion_matrix.png)
 
 ### CNN
 
@@ -88,27 +121,38 @@ So, we masked(recolored) those regions with maximum amount of color intensity.
 
 ### ResNet50
 
-* Common Hyperparameters across Models
-  * Loss functions Image Size: 96 x 96 x 3
-  * Epochs: 200 (but also using Early Stopping)
-  * Training Batch Size: 32
-* Calculated Accuracy, F1-score, Recall and Precision using scikit-learn
+We used ResNet50 model proposed in [Deep Residual Learning for Image Recognition](https://doi.org/10.1109/CVPR.2016.90) research paper. We chose this ResNet50 among other variants considering our dataset.
+We used `ResNet50` model provided by `keras` with slight adjustments. We overrided the final classifcation layers with two fully connected layers one with 1024 neurons and other with three neurons per class.
+Using `accuracy` as metric, we used `ADAM optimizer` to minimize the `sparse categorical cross entropy loss` for every epoch. We ran model for `200 epochs`. Please check the `results/` for model performance throughout training and testing.
+
+### Common Hyperparameters across Models
+
+* Image Size: 96 x 96 x 3
+* Epochs: 200 (but also using Early Stopping)
+* Training Batch Size: 32
+
+### Metrics Calculated
+
+* Accuracy, F1-score, Recall, Precision using scikit-learn
+* Confusion Matrix using seaborn
 
 ## Run
 
 > Launch `jupyter server` on this directory
+
 > Run the notebooks present in `src` folder in following order:
 
-  1. Run [`1_Get_NASA_Raw_Data_FML.ipynb`](./code/1_Get_NASA_Raw_Data_FML.ipynb) jupyter notebook.
-  2. Run [`2_Visualize_NASA_Raw_Data_FML.ipynb`](./code/2_Visualize_NASA_Raw_Data_FML.ipynb) jupyter notebook.
-  3. Run [`3_Visualize_Images_NASA_Image_Data_FML.ipynb`](./code/3_Visualize_Images_NASA_Image_Data_FML.ipynb) jupyter notebook.
-  4. Run [`4_Visualize_Images_NASA_Patch_Data_FML.ipynb`](./code/4_Visualize_Images_NASA_Patch_Data_FML.ipynb) jupyter notebook.
-  5. Run [`5_Sampling_Classes.ipynb`](./code/5_Sampling_Classes.ipynb) jupyter notebook.
-  6. Run [`6_Preprocesing_Classes.ipynb`](./code/6_Preprocesing_Classes.ipynb) jupyter notebook.
-  7. Run [`7_CNN.ipynb`](./code/7_CNN.ipynb) jupyter notebook.
-  8. Run [`8_Alexnet.ipynb`](./code/8_Alexnet.ipynb) jupyter notebook.
-  9. Run [`9_MonbileNet.ipynb`](./code/9_MonbileNet.ipynb) jupyter notebook.
-  10. Run [`10_ResNet50.ipynb`](./code/10_ResNet50.ipynb) jupyter notebook.
+  1. Run [`1_Get_NASA_Raw_Data_FML.ipynb`](./src/1_Get_NASA_Raw_Data_FML.ipynb) jupyter notebook.
+  2. Run [`2_Visualize_NASA_Raw_Data_FML.ipynb`](./src/2_Visualize_NASA_Raw_Data_FML.ipynb) jupyter notebook.
+  3. Run [`3_Visualize_Images_NASA_Image_Data_FML.ipynb`](./src/3_Visualize_Images_NASA_Image_Data_FML.ipynb) jupyter notebook.
+  4. Run [`4_Visualize_Images_NASA_Patch_Data_FML.ipynb`](./src/4_Visualize_Images_NASA_Patch_Data_FML.ipynb) jupyter notebook.
+  5. Run [`5_Sampling_Classes.ipynb`](./src/5_Sampling_Classes.ipynb) jupyter notebook.
+  6. Run [`6_Preprocesing_Classes.ipynb`](./src/6_Preprocesing_Classes.ipynb) jupyter notebook.
+  7. Run [`7_CNN.ipynb`](./src/7_CNN.ipynb) jupyter notebook.
+  8. Run [`8_Alexnet.ipynb`](./src/8_Alexnet.ipynb) jupyter notebook.
+  9. Run [`9_MonbileNet.ipynb`](./src/9_MonbileNet.ipynb) jupyter notebook.
+  10. Run [`10_ResNet50.ipynb`](./src/10_ResNet50.ipynb) jupyter notebook.
+  11. Run [`11_Simple_RGB_Classifier.ipynb`](./src/11_Simple_RGB_Classifier.ipynb) jupyter notebook.
 
 > You can find the results of Confusion matrix, Accuracy vs loss plot, Actual vs Prediction plot in `results/` folder
 
