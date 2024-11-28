@@ -115,9 +115,17 @@ The classification criteria can be refined and finer details can be added as new
 
 ### CNN
 
+We had implemented `CNN` model. Using `accuracy` as metric, we used `ADAM optimizer` to minimize the `sparse categorical cross entropy loss` for every epoch. We ran model for `200 epochs`. Please check the `results/` for model performance throughout training and testing.
+
 ### AlexNet
 
+We used `AlexNet50` model provided by `keras` with slight adjustments. We overrided the final classifcation layers with two fully connected layers one with 1024 neurons and other with three neurons per class.
+Using `accuracy` as metric, we used `ADAM optimizer` to minimize the `sparse categorical cross entropy loss` for every epoch. We ran model for `200 epochs`. Please check the `results/` for model performance throughout training and testing.
+
 ### MobileNetV2
+
+We used `MobileNet50` model provided by `keras` with slight adjustments. We overrided the final classifcation layers with two fully connected layers one with 1024 neurons and other with three neurons per class.
+Using `accuracy` as metric, we used `ADAM optimizer` to minimize the `sparse categorical cross entropy loss` for every epoch. We ran model for `200 epochs`. Please check the `results/` for model performance throughout training and testing.
 
 ### ResNet50
 
